@@ -101,7 +101,7 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="absolute bottom-0 left-0 w-screen p-8 bg-yellow-500">
+        <div className="absolute bottom-0 left-0 w-screen p-4 bg-yellow-500">
           <div className="max-w-7xl m-auto flex items-center justify-center gap-16 text-black">
             <div className="flex gap-4 items-center">
               <Timer className="fill-black size-8" />
@@ -116,19 +116,11 @@ export default function Home() {
       </div>
 
       <div className="h-screen w-full snap-start">
-        <section className="max-w-7xl m-auto p-4 h-full grid items-center text-black">
+        <section className="max-w-7xl m-auto p-4 h-full grid items-center justify-center text-black">
           <div className="grid grid-cols-2 gap-8 bg-zinc-100 rounded p-8">
-            <div className="flex flex-col gap-8">
-              <div className="aspect-square bg-black rounded" />
+            <div className="aspect-square bg-black rounded" />
 
-              <div className="grid grid-cols-3 gap-8">
-                <div className="aspect-square bg-black rounded" />
-                <div className="aspect-square bg-black rounded" />
-                <div className="aspect-square bg-black rounded" />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8 justify-between">
               <h4 className="font-bold text-4xl">Camisa Seleção Pro 2026</h4>
               <div className="flex gap-8 items-center">
                 <p className="text-4xl font-bold text-green-500">R$120,00</p>
