@@ -21,19 +21,19 @@ export default function Home() {
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
 
-        <section className="relative max-w-7xl m-auto p-4 h-full grid grid-cols-2 gap-4 items-center justify-center z-30">
-          <div className="flex flex-col gap-4 items-start">
+        <section className="relative max-w-7xl m-auto p-4 h-full grid grid-cols-1 lg:grid-cols-2 gap-4 items-center justify-center z-30">
+          <div className="flex flex-col gap-4 items-center lg:items-start">
             <div className="flex px-4 py-2 border border-solid border-green-500 bg-yellow-500/10 items-center gap-2 rounded-full">
               <span className="size-4 bg-yellow-500 rounded-full" />
-              <p className="uppercase font-bold text-sm">Edição Oficial 2026</p>
+              <p className="uppercase font-bold text-xs lg:text-sm">Edição Oficial 2026</p>
             </div>
 
-            <h1 className="text-7xl font-bold">O Manto do Hexa: <span className="text-yellow-500">Vista a Paixão Nacional</span></h1>
+            <h1 className="text-4xl text-center lg:text-left lg:text-7xl font-bold">O Manto do Hexa: <span className="text-yellow-500">Vista a Paixão Nacional</span></h1>
 
-            <p>Entre em campo com estilo e garanta a camisa que une tecnologia de ponta e a tradição do futebol mais vitorioso do mundo.</p>
+            <p className="text-center lg:text-left">Entre em campo com estilo e garanta a camisa que une tecnologia de ponta e a tradição do futebol mais vitorioso do mundo.</p>
           </div>
 
-          <div className="aspect-square w-full relative bg-[url('/hero.png')] bg-contain bg-center bg-no-repeat" />
+          <div className="hidden lg:flex aspect-square w-full relative bg-[url('/hero.png')] bg-contain bg-center bg-no-repeat" />
         </section>
       </div>
 
@@ -42,20 +42,20 @@ export default function Home() {
         <div className="absolute inset-0 z-10 bg-[url('/stadio.png')] bg-cover bg-center bg-no-repeat" />
 
         <section className="relative z-30 max-w-7xl m-auto p-4 h-full flex flex-col gap-4 items-center justify-center text-center">
-          <h2 className="text-7xl font-bold max-w-3xl">Mais Que Uma Camisa. Um Sentimento.</h2>
+          <h2 className="text-4xl lg:text-7xl font-bold max-w-3xl">Mais Que Uma Camisa. Um Sentimento.</h2>
           <p>Sinta a vibração de milhões de corações batendo em um só ritmo.</p>
         </section>
       </div>
 
       <div className="relative h-screen w-full snap-start bg-green-500/10 overflow-hidden">
-        <section className="max-w-7xl m-auto p-4 h-full flex flex-col items-center justify-center gap-16">
+        <section className="max-w-7xl m-auto p-4 h-full flex flex-col items-center justify-center gap-8 lg:gap-16">
           <div className="flex flex-col gap-5 text-center">
-            <span className="uppercase font-bold text-green-500">Especificações Técnicas</span>
-            <h2 className="text-7xl font-bold">Tecnologia e Paixão em Cada Detalhe</h2>
-            <p>Desenvolvida para torcedores exigentes que não abrem mão de qualidade, performance e conforto absoluto.</p>
+            <span className="hidden lg:flex uppercase font-bold text-green-500 text-base">Especificações Técnicas</span>
+            <h2 className="text-4xl lg:text-7xl font-bold">Tecnologia e Paixão em Cada Detalhe</h2>
+            <p className="hidden lg:flex">Desenvolvida para torcedores exigentes que não abrem mão de qualidade, performance e conforto absoluto.</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
             <Card
               icon={Droplet}
               title="Dry-Fit Premium"
@@ -78,16 +78,16 @@ export default function Home() {
       </div>
 
       <div className="relative h-screen w-full snap-start">
-        <section className="grid grid-cols-2 gap-16 max-w-7xl m-auto p-4 items-center justify-center h-full">
-          <div className="aspect-square border border-solid border-white rounded bg-[url('/history.png')] bg-contain bg-center bg-no-repeat" />
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-7xl m-auto p-4 items-center justify-center h-full">
+          <div className="hidden aspect-square border border-solid border-white rounded bg-[url('/history.png')] bg-contain bg-center bg-no-repeat" />
 
-          <div className="flex flex-col gap-8">
-            <h2 className="font-bold text-7xl">A Camisa Que Carrega História</h2>
+          <div className="flex flex-col gap-8 text-center lg:text-left">
+            <h2 className="font-bold text-4xl lg:text-7xl">A Camisa Que Carrega História</h2>
             <p className="text-zinc-400">Não é apenas tecido. São cinco estrelas conquistadas com suor, talento e a ginga que só o brasileiro tem. Ao vestir este manto, você carrega o legado de Pelé, Ronaldo, Romário e tantos outros gigantes.</p>
 
             <div className="w-full h-px bg-white rounded-full" />
 
-            <div className="flex gap-8">
+            <div className="flex gap-8 justify-center lg:justify-start">
               <div className="flex flex-col gap-2">
                 <h4 className="text-yellow-500 font-bold text-4xl">5</h4>
                 <p className="text-zinc-400">Títulos Mundiais</p>
@@ -102,20 +102,20 @@ export default function Home() {
         </section>
 
         <div className="absolute bottom-0 left-0 w-screen p-4 bg-yellow-500">
-          <div className="max-w-7xl m-auto flex items-center justify-center gap-16 text-black">
+          <div className="max-w-7xl m-auto flex items-center justify-center gap-8 lg:gap-16 text-black">
             <div className="flex gap-4 items-center">
               <Timer className="fill-black size-8" />
               <h4 className="uppercase font-bold">Edição Limitada da Copa</h4>
             </div>
 
-            <span className="size-2 bg-black rounded-full" />
+            <span className="hidden lg:flex size-2 bg-black rounded-full" />
 
-            <p>Restam poucas unidades do lote atual. Garanta antes que acabe.</p>
+            <p className="hidden lg:flex">Restam poucas unidades do lote atual. Garanta antes que acabe.</p>
           </div>
         </div>
       </div>
 
-      <div className="h-screen w-full snap-start">
+      <div className="hidden h-screen w-full snap-start">
         <section className="max-w-7xl m-auto p-4 h-full grid items-center justify-center text-black">
           <div className="grid grid-cols-2 gap-8 bg-zinc-100 rounded p-8">
             <div className="aspect-square bg-black rounded" />
@@ -135,7 +135,7 @@ export default function Home() {
 
                 <div className="flex gap-4">
                   <div className="relative">
-                    <input name="color" id="yellow" type="radio" className="peer hidden" defaultChecked />
+                    <input name="color" id="yellow" type="radio" className="peer hidden" />
                     <label 
                       htmlFor="yellow" 
                       className="block size-8 bg-yellow-500 rounded-full cursor-pointer transition-all peer-checked:ring-2 peer-checked:ring-green-500 peer-checked:ring-offset-2" 
