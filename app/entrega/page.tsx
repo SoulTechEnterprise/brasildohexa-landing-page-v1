@@ -14,15 +14,17 @@ export default function Delivery() {
     const [CEP, setCEP] = useState<string>("")
     const [street, setStreet] = useState<string>("")
     const [number, setNumber] = useState<string>("")
+    const [district, setDistrict] = useState<string>("")
     const [city, setCity] = useState<string>("")
     const [state, setState] = useState<string>("")
 
     const getAddress = async (cep: string) => {
         if(cep.length > 7) {
             const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-            const { logradouro, localidade, estado } = await response.data
+            const { logradouro, localidade, estado, bairro } = await response.data
             
             setStreet(logradouro)
+            setDistrict(bairro)
             setCity(localidade)
             setState(estado)
         }
@@ -34,8 +36,17 @@ export default function Delivery() {
         if (cart.length === 0) return
 
         setIsLoading(true)
+
+        const address = {
+            cep: CEP,
+            street,
+            number,
+            district,
+            city,
+            state
+        }
         
-        const response = await createPayment(cart)
+        const response = await createPayment(cart, address)
 
         if (response.url) {
             window.location.href = response.url
@@ -63,6 +74,11 @@ export default function Delivery() {
                     <div className="flex flex-col gap-2">
                         <label htmlFor="number">Número</label>
                         <input required value={number} onChange={(el) => {setNumber(el.target.value)}} className="px-4 py-2 rounded outline-none border border-solid border-white/75" id="number" />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="district">Bairro</label>
+                        <input required value={district} onChange={(el) => {setDistrict(el.target.value)}} className="px-4 py-2 rounded outline-none border border-solid border-white/75" id="district" />
                     </div>
 
                     <div className="flex flex-col gap-2">
