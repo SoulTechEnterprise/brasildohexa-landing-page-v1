@@ -9,6 +9,29 @@ body {
   background-color: black;
 }
 
+/* Scrollbar vertical visível apenas no body */
+body {
+  scrollbar-width: thin; /* Firefox - scrollbar fino */
+  scrollbar-color: #27272a #000000; /* Firefox - thumb (zinc-800) e track (black) */
+}
+
+body::-webkit-scrollbar {
+  width: 6px; /* Largura do scrollbar vertical */
+}
+
+body::-webkit-scrollbar-track {
+  background: #000000; /* Fundo preto */
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #27272a; /* Cinza escuro (zinc-800) */
+  border-radius: 3px; /* Bordas arredondadas */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46; /* Cinza mais claro ao hover (zinc-700) */
+}
+
 @theme inline {
   --radix-toast-swipe-move-x: var(--radix-toast-swipe-move-x, 0);
   --radius-sm: calc(var(--radius) - 4px);

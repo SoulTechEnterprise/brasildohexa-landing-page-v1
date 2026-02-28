@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { initMercadoPago } from '@mercadopago/sdk-react';
 import { useCartStore } from '@/app/_context/cart';
 import { Color, Size } from './enum';
-import Link from 'next/link';
 
 import { toast } from "sonner"
 
@@ -12,7 +11,6 @@ initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
 
 export default function Cart() {
   const addToCart = useCartStore((state) => state.addToCart)
-  const cartLength = useCartStore((state) => state.cart.length)
 
   const [color, setColor] = useState<Color>(Color.AMARELO)
   const [size, setSize] = useState<Size>(Size.M)
@@ -146,10 +144,12 @@ export default function Cart() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <button onClick={handleCart} className="cursor-pointer uppercase font-bold text-center border border-solid border-green-500 px-2 py-4 rounded">Adicionar</button>
-                <Link href="/pedidos" aria-disabled={cartLength > 0 ? false : true} onClick={(e) => {cartLength > 0 || e.preventDefault()}} className="uppercase font-bold text-center bg-green-500 px-2 py-4 rounded text-white cursor-pointer aria-disabled:cursor-default aria-disabled:bg-green-800">Ver Carrinho</Link>
-              </div>
+              <button 
+                onClick={handleCart} 
+                className="w-full cursor-pointer uppercase font-bold text-center bg-green-500 text-white px-4 py-4 rounded hover:bg-green-600 transition-colors"
+              >
+                Adicionar ao Carrinho
+              </button>
             </div>
           </div>
         </section>

@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Header } from "./_components/includes/header";
 import { Footer } from "./_components/includes/footer";
+import { FloatingCart } from "./_components/floating-cart";
 
 const montserrat = Montserrat({
   variable: "--font-geist-mono",
@@ -28,6 +29,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {children}
+        <FloatingCart />
         <Toaster />
       </body>
     </html>
