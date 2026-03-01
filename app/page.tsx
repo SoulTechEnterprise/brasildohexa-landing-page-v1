@@ -1,11 +1,12 @@
 import { Droplet, Shield, Shirt, Timer } from "lucide-react";
 import { Card } from "./_components/card";
+import { Footer } from "./_components/includes/footer";
 
 import Cart from "./_components/cart";
 
 export default function Home() {
   return (
-    <main className="h-dvh w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth text-white bg-black">
+    <main className="w-full overflow-y-scroll snap-y snap-proximity scroll-smooth text-white bg-black">
       
       <div className="relative h-dvh w-full snap-start overflow-hidden">
         <div className="absolute inset-0 z-20 bg-black/90" />
@@ -79,7 +80,7 @@ export default function Home() {
 
       <div className="relative h-dvh w-full snap-start">
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-7xl m-auto p-4 items-center justify-center h-full">
-          <div className="hidden lg:flex aspect-square border border-solid border-white rounded bg-[url('/history.png')] bg-contain bg-center bg-no-repeat" />
+          <div className="hidden lg:flex aspect-square border border-solid border-white rounded bg-[url('/history.webp')] bg-contain bg-center bg-no-repeat" />
 
           <div className="flex flex-col gap-8 text-center lg:text-left">
             <h2 className="font-bold text-4xl lg:text-7xl">A camisa que carrega história</h2>
@@ -116,6 +117,7 @@ export default function Home() {
       </div>
 
       <Cart />
+      <Footer />
     </main>
   );
 }

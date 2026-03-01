@@ -3,6 +3,7 @@
 import { Minus, Plus, Trash, ShoppingBag, ArrowLeft } from "lucide-react"
 import { useCartStore } from "../_context/cart"
 import { useMemo } from "react"
+import { Footer } from "../_components/includes/footer"
 
 import Link from "next/link"
 
@@ -149,6 +150,7 @@ export default function Cart() {
                 </div>
               )}
             </section>
+            <Footer />
         </main>
     )
 }

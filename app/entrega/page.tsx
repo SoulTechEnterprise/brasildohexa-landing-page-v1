@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { useCartStore } from "../_context/cart";
 import { createPayment } from "../actions/mercadopago";
 import { MoveRight, Package, MapPin, CheckCircle2, Search, ArrowLeft } from "lucide-react";
+import { Footer } from "../_components/includes/footer";
 
 export default function Delivery() {
     const cart = useCartStore(el => el.cart)
@@ -303,6 +304,7 @@ export default function Delivery() {
                     </div>
                 </div>
             </section>
+            <Footer />
         </main>
     )
 }
