@@ -42,21 +42,32 @@ export async function createPayment(cart: CartItem[], address: Address) {
       }
     })
 
-    /*
-      const { data } = await axios.post(process.env.N8N_MELHOR_ENVIO!, {
-        data: {
-          to: address.cep,
-          products
-        }
-      })
-    */
+    const { data } = await axios.post(`${process.env.MELHOR_ENVIO_API_URL}/me/shipment/calculate`!, {
+      "from": {
+        "postal_code": "96020360"
+      },
+      "to": {
+        "postal_code": address.cep
+      },
+      "products": products
+    }, {
+      headers: {
+        authorization: `Bearer ${process.env.MELHOR_ENVIO_API_TOKEN}`
+      }
+    })
+    
+    const cheapest = data
+    .filter((el: any) => el.price)
+    .reduce((prev: any, curr: any) => {
+      return (Number(curr.price) < Number(prev.price)) ? curr : prev
+    })
 
     const preference = new Preference(client)
     const result = await preference.create({
       body: {
         items,
         shipments: {
-          cost: 10
+          cost: Number(cheapest.price)
         },
         auto_return: 'approved',
         back_urls: {
@@ -66,7 +77,8 @@ export async function createPayment(cart: CartItem[], address: Address) {
         },
         metadata: {
           products,
-          address
+          address,
+          cheapest
         }
       },
     })
