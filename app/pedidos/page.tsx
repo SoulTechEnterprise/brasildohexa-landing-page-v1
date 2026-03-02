@@ -21,7 +21,7 @@ export default function Cart() {
 
     return (
         <main className="min-h-dvh text-white bg-black">
-            <section className="max-w-4xl m-auto p-4 py-6 sm:py-8 lg:py-16">
+            <section className="max-w-7xl m-auto p-4 py-6 sm:py-8 lg:py-16">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 lg:mb-12 gap-4">
                 <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold">
                   Seu <span className="text-yellow-500">Carrinho</span>

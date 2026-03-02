@@ -22,21 +22,21 @@ export function FloatingCart() {
         >
             <div className="relative">
                 {/* Botão do carrinho */}
-                <div className="flex items-center justify-center size-14 sm:size-16 bg-green-500 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 hover:scale-110 group-hover:shadow-xl group-hover:shadow-green-500/50">
-                    <ShoppingCart className="size-6 sm:size-7 text-white" />
+                <div className="flex items-center justify-center size-16 sm:size-20 bg-green-500 rounded-full shadow-2xl hover:bg-green-600 transition-all duration-300 hover:scale-110 ring-4 ring-green-500/30 hover:ring-green-400/50">
+                    <ShoppingCart className="size-8 sm:size-10 text-white stroke-[2.5]" strokeWidth={2.5} />
                 </div>
 
                 {/* Badge com contador */}
-                <div className="absolute -top-2 -right-2 flex items-center justify-center min-w-6 h-6 px-2 bg-yellow-500 rounded-full border-2 border-black shadow-lg animate-pulse">
-                    <span className="text-xs font-bold text-black">
+                <div className="absolute -top-2 -right-2 flex items-center justify-center min-w-7 h-7 px-2.5 bg-yellow-400 rounded-full border-3 border-black shadow-xl animate-pulse">
+                    <span className="text-sm font-extrabold text-black">
                         {totalItems > 99 ? '99+' : totalItems}
                     </span>
                 </div>
 
                 {/* Tooltip */}
-                <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-zinc-900 text-white text-sm font-semibold rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap border border-zinc-800">
+                <div className="absolute bottom-full right-0 mb-3 px-4 py-2 bg-white text-black text-sm font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap border-2 border-green-500">
                     Ver Carrinho
-                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-zinc-900"></div>
+                    <div className="absolute top-full right-6 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-white"></div>
                 </div>
             </div>
         </Link>
