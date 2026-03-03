@@ -54,10 +54,11 @@ export async function createPayment(cart: CartItem[], address: Address) {
       headers: {
         authorization: `Bearer ${process.env.MELHOR_ENVIO_API_TOKEN}`
       }
-    })
+    }) 
+    console.log(data)
     
     const cheapest = data
-    .filter((el: any) => el.price)
+    .filter((el: any) => el.price && el.company?.name === 'Correios')
     .reduce((prev: any, curr: any) => {
       return (Number(curr.price) < Number(prev.price)) ? curr : prev
     })
@@ -71,7 +72,7 @@ export async function createPayment(cart: CartItem[], address: Address) {
         },
         auto_return: 'approved',
         back_urls: {
-          success: 'https://aly-n8n.soultech.agency/webhook-test/5ca9a2c9-1d8b-4004-ba35-c2cd6e91fe3d',
+          success: 'https://www.google.com',
           failure: 'https://www.google.com',
           pending: 'https://www.google.com'
         },

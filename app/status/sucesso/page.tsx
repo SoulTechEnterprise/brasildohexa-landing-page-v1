@@ -1,7 +1,10 @@
+import { createTicket } from "@/app/actions/melhorenvio"
 import { CheckCircle2, Package, Mail, Home } from "lucide-react"
 import Link from "next/link"
 
-export default function Sucesso() {
+export default async function Sucesso() {
+    await createTicket({id: "147883529741"})
+
     return (
         <main className="min-h-dvh flex items-center justify-center bg-black text-white p-4">
             <div className="max-w-2xl w-full">
