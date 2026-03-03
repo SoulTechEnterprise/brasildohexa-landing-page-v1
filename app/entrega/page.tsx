@@ -5,12 +5,16 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 import { useCartStore } from "../_context/cart";
 import { createPayment } from "../actions/mercadopago";
-import { MoveRight, Package, MapPin, CheckCircle2, Search, ArrowLeft } from "lucide-react";
+import { MoveRight, Package, MapPin, CheckCircle2, Search, ArrowLeft, User } from "lucide-react";
 import { Footer } from "../_components/includes/footer";
 
 export default function Delivery() {
     const cart = useCartStore(el => el.cart)
 
+    const [name, setName] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const [phone, setPhone] = useState<string>("")
+    const [cpf, setCpf] = useState<string>("")
     const [CEP, setCEP] = useState<string>("")
     const [street, setStreet] = useState<string>("")
     const [number, setNumber] = useState<string>("")
@@ -47,11 +51,47 @@ export default function Delivery() {
 
     const [isLoading, setIsLoading] = useState(false)
 
+    const formatCEP = (value: string) => {
+        const cleaned = value.replace(/\D/g, '')
+        if (cleaned.length <= 5) return cleaned
+        return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`
+    }
+
+    const formatPhone = (value: string) => {
+        const cleaned = value.replace(/\D/g, '')
+        if (cleaned.length <= 2) return cleaned
+        if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`
+        if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`
+        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`
+    }
+
+    const formatCPF = (value: string) => {
+        const cleaned = value.replace(/\D/g, '')
+        if (cleaned.length <= 3) return cleaned
+        if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`
+        if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`
+        return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`
+    }
+
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }
+
+    const validateCPF = (cpf: string) => {
+        const cleaned = cpf.replace(/\D/g, '')
+        return cleaned.length === 11
+    }
+
     const subtotal = useMemo(() => {
         return cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
     }, [cart])
 
-    const isFormValid = CEP.length >= 8 && street && number && district && city && state
+    const isFormValid = 
+        name.trim().length > 0 &&
+        email.trim().length > 0 && validateEmail(email) &&
+        phone.replace(/\D/g, '').length >= 10 &&
+        cpf.replace(/\D/g, '').length === 11 &&
+        CEP.length >= 8 && street && number && district && city && state
 
     const handlePayment = async () => {
         if (cart.length === 0 || !isFormValid) return
@@ -76,12 +116,6 @@ export default function Delivery() {
         }
     }
 
-    const formatCEP = (value: string) => {
-        const cleaned = value.replace(/\D/g, '')
-        if (cleaned.length <= 5) return cleaned
-        return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`
-    }
-
     return (
         <main className="min-h-dvh text-white bg-black">
             <section className="max-w-7xl m-auto p-4 py-6 sm:py-8 lg:py-16">
@@ -100,8 +134,208 @@ export default function Delivery() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                    {/* Resumo do Pedido */}
-                    <div className="flex flex-col gap-4 lg:gap-6 order-2 lg:order-1">
+                    {/* Coluna Esquerda - Formulários */}
+                    <div className="flex flex-col gap-6 lg:gap-8 order-2 lg:order-1">
+                        {/* Container 1: Dados Pessoais */}
+                        <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
+                            <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                                <User className="size-5 sm:size-6 text-yellow-500" />
+                                <h2 className="text-lg sm:text-xl font-bold">Dados Pessoais</h2>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="name" className="text-sm font-medium text-zinc-300">
+                                        Nome Completo *
+                                    </label>
+                                    <input 
+                                        required 
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                        placeholder="João Silva"
+                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                        id="name" 
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="email" className="text-sm font-medium text-zinc-300">
+                                        E-mail *
+                                    </label>
+                                    <input 
+                                        required 
+                                        type="email"
+                                        value={email} 
+                                        onChange={(e) => setEmail(e.target.value)} 
+                                        placeholder="joao@email.com"
+                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                        id="email" 
+                                    />
+                                    {email.length > 0 && !validateEmail(email) && (
+                                        <span className="text-xs text-red-500">E-mail inválido</span>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="phone" className="text-sm font-medium text-zinc-300">
+                                            Telefone *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={phone} 
+                                            onChange={(e) => setPhone(formatPhone(e.target.value))} 
+                                            placeholder="(11) 99999-9999"
+                                            maxLength={15}
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                            id="phone" 
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="cpf" className="text-sm font-medium text-zinc-300">
+                                            CPF *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={cpf} 
+                                            onChange={(e) => setCpf(formatCPF(e.target.value))} 
+                                            placeholder="000.000.000-00"
+                                            maxLength={14}
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                            id="cpf" 
+                                        />
+                                        {cpf.length > 0 && !validateCPF(cpf) && (
+                                            <span className="text-xs text-red-500">CPF deve ter 11 dígitos</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Container 2: Endereço de Entrega */}
+                        <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
+                            <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                                <MapPin className="size-5 sm:size-6 text-yellow-500" />
+                                <h2 className="text-lg sm:text-xl font-bold">Endereço de Entrega</h2>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="cep" className="text-sm font-medium text-zinc-300">
+                                        CEP *
+                                    </label>
+                                    <div className="relative">
+                                        <input 
+                                            required 
+                                            value={CEP} 
+                                            onChange={(e) => {
+                                                const formatted = formatCEP(e.target.value)
+                                                setCEP(formatted)
+                                                getAddress(formatted)
+                                            }} 
+                                            placeholder="00000-000"
+                                            maxLength={9}
+                                            className={`w-full px-4 py-3 rounded bg-black border ${cepError ? 'border-red-500' : 'border-zinc-700'} text-white outline-none focus:border-green-500 transition-colors`}
+                                            id="cep" 
+                                        />
+                                        {isLoadingCEP && (
+                                            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-zinc-400 animate-pulse" />
+                                        )}
+                                    </div>
+                                    {cepError && (
+                                        <span className="text-xs text-red-500">CEP não encontrado</span>
+                                    )}
+                                    <a 
+                                        href="https://buscacepinter.correios.com.br/app/endereco/index.php" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-green-500 hover:underline"
+                                    >
+                                        Não sei meu CEP
+                                    </a>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="flex flex-col gap-2 sm:col-span-2">
+                                        <label htmlFor="street" className="text-sm font-medium text-zinc-300">
+                                            Endereço *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={street} 
+                                            onChange={(e) => setStreet(e.target.value)} 
+                                            placeholder="Rua, Avenida..."
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                            id="street" 
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="number" className="text-sm font-medium text-zinc-300">
+                                            Número *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={number} 
+                                            onChange={(e) => setNumber(e.target.value)} 
+                                            placeholder="123"
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                            id="number" 
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="district" className="text-sm font-medium text-zinc-300">
+                                        Bairro *
+                                    </label>
+                                    <input 
+                                        required 
+                                        value={district} 
+                                        onChange={(e) => setDistrict(e.target.value)} 
+                                        placeholder="Centro"
+                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                        id="district" 
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="flex flex-col gap-2 sm:col-span-2">
+                                        <label htmlFor="city" className="text-sm font-medium text-zinc-300">
+                                            Cidade *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={city} 
+                                            onChange={(e) => setCity(e.target.value)} 
+                                            placeholder="São Paulo"
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
+                                            id="city" 
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="state" className="text-sm font-medium text-zinc-300">
+                                            UF *
+                                        </label>
+                                        <input 
+                                            required 
+                                            value={state} 
+                                            onChange={(e) => setState(e.target.value.toUpperCase())} 
+                                            placeholder="SP"
+                                            maxLength={2}
+                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors uppercase"
+                                            id="state" 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Coluna Direita - Container 3: Resumo do Pedido */}
+                    <div className="flex flex-col gap-6 lg:gap-8 order-1 lg:order-2">
                         <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
                             <div className="flex items-center gap-3 mb-4 sm:mb-6">
                                 <Package className="size-5 sm:size-6 text-yellow-500" />
@@ -133,7 +367,7 @@ export default function Delivery() {
                                 ))}
                             </div>
 
-                            <div className="space-y-3 text-sm">
+                            <div className="space-y-3 text-sm mb-6">
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>Total</span>
                                     <span className="text-yellow-500">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
@@ -142,164 +376,45 @@ export default function Delivery() {
                                     Frete calculado na próxima etapa
                                 </p>
                             </div>
-                        </div>
 
-                        <div className="bg-green-500/10 border border-green-500/50 rounded-lg p-4">
-                            <div className="flex gap-3">
-                                <CheckCircle2 className="size-5 text-green-500 shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="font-semibold text-green-500">Compra Segura</p>
-                                    <p className="text-sm text-zinc-400 mt-1">
-                                        Pagamento protegido pelo Mercado Pago. Seus dados estão seguros.
-                                    </p>
+                            <div className="bg-green-500/10 border border-green-500/50 rounded-lg p-4 mb-6">
+                                <div className="flex gap-3">
+                                    <CheckCircle2 className="size-5 text-green-500 shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="font-semibold text-green-500">Compra Segura</p>
+                                        <p className="text-sm text-zinc-400 mt-1">
+                                            Pagamento protegido pelo Mercado Pago. Seus dados estão seguros.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800 order-1 lg:order-2">
-                        <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                            <MapPin className="size-5 sm:size-6 text-yellow-500" />
-                            <h2 className="text-lg sm:text-xl font-bold">Endereço de Entrega</h2>
-                        </div>
-
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="cep" className="text-sm font-medium text-zinc-300">
-                                    CEP *
-                                </label>
-                                <div className="relative">
-                                    <input 
-                                        required 
-                                        value={CEP} 
-                                        onChange={(e) => {
-                                            const formatted = formatCEP(e.target.value)
-                                            setCEP(formatted)
-                                            getAddress(formatted)
-                                        }} 
-                                        placeholder="00000-000"
-                                        maxLength={9}
-                                        className={`w-full px-4 py-3 rounded bg-black border ${cepError ? 'border-red-500' : 'border-zinc-700'} text-white outline-none focus:border-green-500 transition-colors`}
-                                        id="cep" 
-                                    />
-                                    {isLoadingCEP && (
-                                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-zinc-400 animate-pulse" />
-                                    )}
-                                </div>
-                                {cepError && (
-                                    <span className="text-xs text-red-500">CEP não encontrado</span>
-                                )}
-                                <a 
-                                    href="https://buscacepinter.correios.com.br/app/endereco/index.php" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-green-500 hover:underline"
+                            <div className="space-y-3">
+                                <button
+                                    onClick={handlePayment}
+                                    disabled={isLoading || !isFormValid || cart.length === 0}
+                                    className="w-full cursor-pointer flex items-center justify-center gap-3 bg-green-500 text-white uppercase py-4 rounded font-bold text-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
                                 >
-                                    Não sei meu CEP
-                                </a>
+                                    {isLoading ? (
+                                        <>
+                                            <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            Redirecionando...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Finalizar Pagamento
+                                            <MoveRight className="size-5" />
+                                        </>
+                                    )}
+                                </button>
+
+                                <Link 
+                                    href="/pedidos"
+                                    className="block text-center text-sm text-zinc-400 hover:text-white transition-colors"
+                                >
+                                    Voltar ao carrinho
+                                </Link>
                             </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div className="flex flex-col gap-2 sm:col-span-2">
-                                    <label htmlFor="street" className="text-sm font-medium text-zinc-300">
-                                        Endereço *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={street} 
-                                        onChange={(e) => setStreet(e.target.value)} 
-                                        placeholder="Rua, Avenida..."
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="street" 
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="number" className="text-sm font-medium text-zinc-300">
-                                        Número *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={number} 
-                                        onChange={(e) => setNumber(e.target.value)} 
-                                        placeholder="123"
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="number" 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="district" className="text-sm font-medium text-zinc-300">
-                                    Bairro *
-                                </label>
-                                <input 
-                                    required 
-                                    value={district} 
-                                    onChange={(e) => setDistrict(e.target.value)} 
-                                    placeholder="Centro"
-                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                    id="district" 
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div className="flex flex-col gap-2 sm:col-span-2">
-                                    <label htmlFor="city" className="text-sm font-medium text-zinc-300">
-                                        Cidade *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={city} 
-                                        onChange={(e) => setCity(e.target.value)} 
-                                        placeholder="São Paulo"
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="city" 
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="state" className="text-sm font-medium text-zinc-300">
-                                        UF *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={state} 
-                                        onChange={(e) => setState(e.target.value.toUpperCase())} 
-                                        placeholder="SP"
-                                        maxLength={2}
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors uppercase"
-                                        id="state" 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-6 space-y-3">
-                            <button
-                                onClick={handlePayment}
-                                disabled={isLoading || !isFormValid || cart.length === 0}
-                                className="w-full cursor-pointer flex items-center justify-center gap-3 bg-green-500 text-white uppercase py-4 rounded font-bold text-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Redirecionando...
-                                    </>
-                                ) : (
-                                    <>
-                                        Finalizar Pagamento
-                                        <MoveRight className="size-5" />
-                                    </>
-                                )}
-                            </button>
-
-                            <Link 
-                                href="/pedidos"
-                                className="block text-center text-sm text-zinc-400 hover:text-white transition-colors"
-                            >
-                                Voltar ao carrinho
-                            </Link>
                         </div>
                     </div>
                 </div>
