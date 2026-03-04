@@ -1,23 +1,14 @@
 "use client"
 
 import { Minus, Plus, Trash, ShoppingBag, ArrowLeft } from "lucide-react"
-import { useCartStore } from "../_context/cart"
+import { useCartZustand } from "../_context/cart"
 import { useMemo } from "react"
 import { Footer } from "../_components/includes/footer"
 
 import Link from "next/link"
 
 export default function Cart() {
-  const cart = useCartStore(el => el.cart)
-  const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
-
-  const subtotal = useMemo(() => {
-    return cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-  }, [cart])
-
-  const totalItems = useMemo(() => {
-    return cart.reduce((acc, item) => acc + item.quantity, 0)
-  }, [cart])
+  const { cart, total, increaseQuantity, decreaseQuantity, removeItem } = useCartZustand()
 
     return (
         <main className="min-h-dvh text-white bg-black">
@@ -114,16 +105,12 @@ export default function Cart() {
                       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Resumo</h2>
 
                       <div className="space-y-3 mb-4 sm:mb-6">
-                        <div className="flex justify-between text-sm sm:text-base text-zinc-400">
-                          <span>{totalItems} {totalItems === 1 ? 'item' : 'itens'}</span>
-                          <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
-                        </div>
                         
                         <div className="pt-3 border-t border-zinc-800">
                           <div className="flex justify-between text-base sm:text-lg font-bold">
                             <span>Subtotal</span>
                             <span className="text-yellow-500">
-                              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
+                              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total() || 0)}
                             </span>
                           </div>
                           <p className="text-xs text-zinc-400 mt-2">

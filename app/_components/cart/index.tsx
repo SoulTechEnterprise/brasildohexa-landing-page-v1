@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { initMercadoPago } from '@mercadopago/sdk-react';
-import { useCartStore } from '@/app/_context/cart';
+import { useCartZustand } from '@/app/_context/cart';
 import { Color, Size } from './enum';
 
 import { toast } from "sonner"
@@ -10,7 +10,7 @@ import { toast } from "sonner"
 initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
 
 export default function Cart() {
-  const addToCart = useCartStore((state) => state.addToCart)
+  const { addToCart } = useCartZustand()
 
   const [color, setColor] = useState<Color>(Color.AMARELO)
   const [size, setSize] = useState<Size>(Size.M)

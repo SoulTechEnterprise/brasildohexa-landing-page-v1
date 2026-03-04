@@ -40,7 +40,7 @@ export function Footer() {
                     <div>
                         <h3 className="font-bold text-lg mb-4">Contato</h3>
                         <ul className="space-y-2 text-sm text-zinc-400">
-                            <li>
+                            <li className="hidden">
                                 <strong className="text-green-500">E-mail:</strong>
                                 <br />
                                 contato@brasildohexa.com.br
@@ -48,7 +48,7 @@ export function Footer() {
                             <li>
                                 <strong className="text-green-500">WhatsApp:</strong>
                                 <br />
-                                (11) 99999-9999
+                                <a href={process.env.NEXT_PUBLIC_WHATSAPP || ""}>Link</a>
                             </li>
                             <li className="text-xs">
                                 Seg a Sex: 9h às 18h

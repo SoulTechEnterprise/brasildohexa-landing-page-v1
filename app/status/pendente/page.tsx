@@ -38,65 +38,20 @@ export default function Pendente() {
                                 dependendo da forma de pagamento escolhida.
                             </p>
                             <ul className="space-y-2 text-sm text-zinc-400">
-                                <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500 mt-1">⏱</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-yellow-500">⏱</span>
                                     <span><strong>Pix:</strong> Aprovação em até 5 minutos após pagamento</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500 mt-1">⏱</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-yellow-500">⏱</span>
                                     <span><strong>Boleto:</strong> Aprovação em até 2 dias úteis após pagamento</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500 mt-1">⏱</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-yellow-500">⏱</span>
                                     <span><strong>Cartão:</strong> Aprovação em até 48 horas</span>
                                 </li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-
-                {/* Notificações */}
-                <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 space-y-4 mb-6">
-                    <div className="flex items-start gap-4">
-                        <Bell className="size-6 text-green-500 shrink-0 mt-1" />
-                        <div className="flex-1">
-                            <h3 className="font-bold text-lg mb-2">Você será notificado!</h3>
-                            <p className="text-sm text-zinc-400">
-                                Assim que o pagamento for confirmado, você receberá:
-                            </p>
-                            <ul className="space-y-2 text-sm text-zinc-400 mt-3">
-                                <li className="flex items-start gap-2">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>E-mail de confirmação do pedido</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Detalhes da compra e prazo de entrega</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Código de rastreamento quando disponível</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Informação do E-mail */}
-                <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 space-y-4 mb-8">
-                    <h3 className="font-bold text-lg flex items-center gap-2">
-                        <Mail className="size-5 text-yellow-500" />
-                        Recibo enviado
-                    </h3>
-                    <p className="text-sm text-zinc-400">
-                        Enviamos um e-mail com os detalhes do seu pedido pendente. 
-                        Guarde este e-mail para acompanhamento.
-                    </p>
-                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-3 text-sm">
-                        <p className="text-yellow-500">
-                            <strong>Importante:</strong> Não é necessário fazer nenhuma ação no momento. 
-                            Aguarde a confirmação do pagamento.
-                        </p>
                     </div>
                 </div>
 
@@ -110,8 +65,7 @@ export default function Pendente() {
                         Voltar para Home
                     </Link>
                     <a 
-                        href="https://wa.me/5511999999999"
-                        target="_blank"
+                        href={process.env.NEXT_PUBLIC_WHATSAPP || ""}
                         rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-500/10 transition-colors"
                     >

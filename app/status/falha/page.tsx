@@ -33,24 +33,24 @@ export default function Falha() {
                         <div className="flex-1">
                             <h3 className="font-bold text-lg mb-2">Possíveis causas:</h3>
                             <ul className="space-y-2 text-sm text-zinc-400">
-                                <li className="flex items-start gap-2">
-                                    <span className="text-red-500 mt-1">•</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-red-500">•</span>
                                     <span>Dados do cartão incorretos ou inválidos</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-red-500 mt-1">•</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-red-500">•</span>
                                     <span>Saldo ou limite insuficiente</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-red-500 mt-1">•</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-red-500">•</span>
                                     <span>Cartão bloqueado ou vencido</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-red-500 mt-1">•</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-red-500">•</span>
                                     <span>Transação rejeitada pela operadora do cartão</span>
                                 </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-red-500 mt-1">•</span>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-red-500">•</span>
                                     <span>Problemas técnicos temporários</span>
                                 </li>
                             </ul>
@@ -83,15 +83,14 @@ export default function Falha() {
                 {/* Ações */}
                 <div className="flex flex-col sm:flex-row gap-4">
                     <Link 
-                        href="/pedidos"
+                        href="/entrega"
                         className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-600 transition-colors"
                     >
                         <ShoppingCart className="size-5" />
                         Voltar ao Carrinho
                     </Link>
                     <a 
-                        href="https://wa.me/5511999999999"
-                        target="_blank"
+                        href={process.env.NEXT_PUBLIC_WHATSAPP || ""}
                         rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-500/10 transition-colors"
                     >

@@ -1,9 +1,11 @@
-import { createTicket } from "@/app/actions/melhorenvio"
+"use client"
+
+import { useTaxZustand } from "@/app/_context/tax"
 import { CheckCircle2, Package, Mail, Home } from "lucide-react"
 import Link from "next/link"
 
-export default async function Sucesso() {
-    await createTicket({id: "147883529741"})
+export default function Sucesso() {
+    const { data: useTax } = useTaxZustand()
 
     return (
         <main className="min-h-dvh flex items-center justify-center bg-black text-white p-4">
@@ -33,40 +35,20 @@ export default async function Sucesso() {
                         <div className="flex-1">
                             <h3 className="font-bold text-lg mb-2">O que acontece agora?</h3>
                             <ul className="space-y-2 text-sm text-zinc-400">
-                                <li className="flex items-start gap-2">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Você receberá um e-mail com os detalhes do pedido</span>
-                                </li>
-                                <li className="flex items-start gap-2">
+                                <li className="flex items-center gap-2">
                                     <span className="text-green-500 mt-1">✓</span>
                                     <span>Seu pedido será preparado e despachado em até 2 dias úteis</span>
                                 </li>
-                                <li className="flex items-start gap-2">
+                                <li className="flex items-center gap-2">
                                     <span className="text-green-500 mt-1">✓</span>
-                                    <span>Código de rastreamento será enviado por e-mail</span>
+                                    <span>Código de rastreamento será enviado por Whatsapp</span>
                                 </li>
-                                <li className="flex items-start gap-2">
+                                <li className="flex items-center gap-2">
                                     <span className="text-green-500 mt-1">✓</span>
-                                    <span>Prazo de entrega: 7 a 14 dias úteis após postagem</span>
+                                    <span>Prazo de entrega: { useTax?.delivery_time || 0 } dias úteis após postagem</span>
                                 </li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-
-                <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 space-y-4 mb-8">
-                    <h3 className="font-bold text-lg flex items-center gap-2">
-                        <Mail className="size-5 text-yellow-500" />
-                        Confirmação enviada
-                    </h3>
-                    <p className="text-sm text-zinc-400">
-                        Um e-mail de confirmação foi enviado para seu endereço cadastrado com todos os 
-                        detalhes da compra e informações de acompanhamento.
-                    </p>
-                    <div className="bg-green-500/10 border border-green-500/30 rounded p-3 text-sm">
-                        <p className="text-green-500">
-                            <strong>Dica:</strong> Verifique sua caixa de spam caso não encontre o e-mail.
-                        </p>
                     </div>
                 </div>
 
@@ -79,8 +61,7 @@ export default async function Sucesso() {
                         Voltar para Home
                     </Link>
                     <a 
-                        href="https://wa.me/5511999999999"
-                        target="_blank"
+                        href={process.env.NEXT_PUBLIC_WHATSAPP || ""}
                         rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-500/10 transition-colors"
                     >

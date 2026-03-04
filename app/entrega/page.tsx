@@ -2,117 +2,160 @@
 
 import axios from "axios";
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { useCartStore } from "../_context/cart";
-import { createPayment } from "../actions/mercadopago";
-import { MoveRight, Package, MapPin, CheckCircle2, Search, ArrowLeft, User } from "lucide-react";
+import { useState } from "react";
+import { useCartZustand } from "../_context/cart";
+import { create_payment } from "../actions/create-payment";
+import { MoveRight, Package, MapPin, CheckCircle2, ArrowLeft, User } from "lucide-react";
 import { Footer } from "../_components/includes/footer";
+import { CardPayment, initMercadoPago } from '@mercadopago/sdk-react';
+
+initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY as string);
+
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { get_tax } from "../actions/get-tax";
+import { useTaxZustand } from "../_context/tax";
+import { useClientZustand } from "../_context/client";
+import { useAddressZustand } from "../_context/address";
+import { create_ticket } from "../actions/create-ticket";
+
+const zodSchema = z.object({
+    name: z.string().min(1),
+    email: z.email(),
+    phone: z.string().min(11),
+    document: z.string().min(11),
+    zip_code: z.string().min(8),
+    street: z.string().nonempty(),
+    number: z.string().nonempty(),
+    district: z.string().nonempty(),
+    city: z.string().nonempty(),
+    state: z.string().nonempty()
+})
+
+type ZodSchema = z.infer<typeof zodSchema>
 
 export default function Delivery() {
-    const cart = useCartStore(el => el.cart)
+    const { cart, clearCart, total } = useCartZustand()
+    const { data: tax, setTax, clearTax } = useTaxZustand()
+    const { data: client, setClient } = useClientZustand()
+    const { data: address, setAddress } = useAddressZustand()
 
-    const [name, setName] = useState<string>("")
-    const [email, setEmail] = useState<string>("")
-    const [phone, setPhone] = useState<string>("")
-    const [cpf, setCpf] = useState<string>("")
-    const [CEP, setCEP] = useState<string>("")
-    const [street, setStreet] = useState<string>("")
-    const [number, setNumber] = useState<string>("")
-    const [district, setDistrict] = useState<string>("")
-    const [city, setCity] = useState<string>("")
-    const [state, setState] = useState<string>("")
-    const [isLoadingCEP, setIsLoadingCEP] = useState(false)
-    const [cepError, setCepError] = useState(false)
-
-    const getAddress = async (cep: string) => {
-        const cleanCEP = cep.replace(/\D/g, '')
-        if(cleanCEP.length === 8) {
-            setIsLoadingCEP(true)
-            setCepError(false)
-            try {
-                const response = await axios.get(`https://viacep.com.br/ws/${cleanCEP}/json/`)
-                const data = await response.data
-                
-                if (data.erro) {
-                    setCepError(true)
-                } else {
-                    setStreet(data.logradouro || "")
-                    setDistrict(data.bairro || "")
-                    setCity(data.localidade || "")
-                    setState(data.uf || "")
-                }
-            } catch (error) {
-                setCepError(true)
-            } finally {
-                setIsLoadingCEP(false)
-            }
-        }
-    }
-
+    const [showCheckout, setShowCheckout] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const formatCEP = (value: string) => {
-        const cleaned = value.replace(/\D/g, '')
-        if (cleaned.length <= 5) return cleaned
-        return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`
-    }
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm<ZodSchema>({
+        resolver: zodResolver(zodSchema),
+        values: {
+            name: client?.name || "",
+            email: client?.email || "",
+            phone: client?.phone || "",
+            document: client?.document || "",
+            zip_code: address?.zip_code || "",
+            street: address?.street || "",
+            number: address?.number || "",
+            district: address?.district || "",
+            city: address?.city || "",
+            state: address?.state || "",
+        }
+    });
 
-    const formatPhone = (value: string) => {
-        const cleaned = value.replace(/\D/g, '')
-        if (cleaned.length <= 2) return cleaned
-        if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`
-        if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`
-        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`
-    }
+    const handleViaCep = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const cep = e.target.value.replace(/\D/g, ''); 
 
-    const formatCPF = (value: string) => {
-        const cleaned = value.replace(/\D/g, '')
-        if (cleaned.length <= 3) return cleaned
-        if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`
-        if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`
-        return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`
-    }
+        if (cep.length !== 8) return; 
 
-    const validateEmail = (email: string) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    }
+        clearTax()
 
-    const validateCPF = (cpf: string) => {
-        const cleaned = cpf.replace(/\D/g, '')
-        return cleaned.length === 11
-    }
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = response.data;
 
-    const subtotal = useMemo(() => {
-        return cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-    }, [cart])
+        const { id, delivery_time, price } = await get_tax({zip_code: cep, products: cart})
+        setTax({id, delivery_time, price: Number(price)})
 
-    const isFormValid = 
-        name.trim().length > 0 &&
-        email.trim().length > 0 && validateEmail(email) &&
-        phone.replace(/\D/g, '').length >= 10 &&
-        cpf.replace(/\D/g, '').length === 11 &&
-        CEP.length >= 8 && street && number && district && city && state
+        if (!data.erro) {
+            setValue("street", data.logradouro, { shouldValidate: true });
+            setValue("district", data.bairro, { shouldValidate: true });
+            setValue("city", data.localidade, { shouldValidate: true });
+            setValue("state", data.uf, { shouldValidate: true });
 
-    const handlePayment = async () => {
-        if (cart.length === 0 || !isFormValid) return
+            document.getElementById("number")?.focus();
+        } else {
+            console.log("CEP não encontrado");
+        }
+    };
 
-        setIsLoading(true)
-
-        const address = {
-            cep: CEP,
+    const handleForm = async ({ zip_code, street, number, district, city, state, name, email, phone, document }: ZodSchema) => {
+        setAddress({
+            zip_code,
             street,
             number,
             district,
             city,
-            state
-        }
-        
-        const response = await createPayment(cart, address)
+            state,
+        })
 
-        if (response.url) {
-            window.location.href = response.url
-        } else {
+        setClient({
+            name, 
+            email, 
+            phone, 
+            document
+        })
+
+        if(!tax?.price) return
+
+        window.scrollTo(0, 0)
+        setShowCheckout(true)
+    }
+
+    const onSubmit = async (paymentData: any) => {
+        setIsLoading(true)
+
+        if (!client || !tax) return
+
+        const total_product = total()
+        const _total = tax.price + total_product
+
+        const response = await create_payment(_total, client.email, client.document, paymentData)
+
+        console.log(response.status)
+
+        switch(response.status) {
+            case 'approved':
+                    if(!tax || !client || !address || !cart) return
+
+                    await create_ticket({ tax, client, address, product: cart })
+                    clearCart()
+                    window.location.href = "/status/sucesso"
+                break
+            case 'rejected':
+                    window.location.href = "/status/falha"
+                break
+            case 'in_process':
+                if(!tax || !client || !address || !cart) return
+
+                await create_ticket({ tax, client, address, product: cart })
+                clearCart()
+                window.location.href = "/status/pendente"
+                break
+            default:
+                window.location.href = "/status/falha"
+        }
+
+        if (!response) {
             setIsLoading(false)
+            window.location.href = "/status/falha"
+        } else {
+            if(!tax || !client || !address || !cart) return
+
+            await create_ticket({ tax, client, address, product: cart })
+            clearCart()
+            window.location.href = "/status/sucesso"
         }
     }
 
@@ -134,208 +177,204 @@ export default function Delivery() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                    {/* Coluna Esquerda - Formulários */}
-                    <div className="flex flex-col gap-6 lg:gap-8 order-2 lg:order-1">
-                        {/* Container 1: Dados Pessoais */}
-                        <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
-                            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                                <User className="size-5 sm:size-6 text-yellow-500" />
-                                <h2 className="text-lg sm:text-xl font-bold">Dados Pessoais</h2>
+                    <form id="main-form" onSubmit={handleSubmit(handleForm)} className="flex flex-col gap-6 lg:gap-8 order-2 lg:order-1">
+                        {!showCheckout ? (
+                            <>
+                                <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
+                                    <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                                        <User className="size-5 sm:size-6 text-yellow-500" />
+                                        <h2 className="text-lg sm:text-xl font-bold">Dados Pessoais</h2>
+                                    </div>
+
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="name" className="text-sm font-medium text-zinc-300">
+                                                Nome Completo *
+                                            </label>
+                                            <input 
+                                                {...register("name")}
+                                                data-invalid={errors.name ? "true" : "false"}
+                                                placeholder="João Silva"
+                                                className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                id="name"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="email" className="text-sm font-medium text-zinc-300">
+                                                E-mail *
+                                            </label>
+                                            <input 
+                                                {...register("email")}
+                                                data-invalid={errors.email ? "true" : "false"}
+                                                placeholder="joao@email.com"
+                                                className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                id="email" 
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="flex flex-col gap-2">
+                                                <label htmlFor="phone" className="text-sm font-medium text-zinc-300">
+                                                    Telefone *
+                                                </label>
+                                                <input 
+                                                    {...register("phone")}
+                                                    data-invalid={errors.phone ? "true" : "false"}
+                                                    placeholder="(11) 99999-9999"
+                                                    maxLength={15}
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="phone" 
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label htmlFor="cpf" className="text-sm font-medium text-zinc-300">
+                                                    CPF *
+                                                </label>
+                                                <input 
+                                                    {...register("document")}
+                                                    data-invalid={errors.document ? "true" : "false"}
+                                                    placeholder="000.000.000-00"
+                                                    maxLength={14}
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="cpf" 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
+                                    <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                                        <MapPin className="size-5 sm:size-6 text-yellow-500" />
+                                        <h2 className="text-lg sm:text-xl font-bold">Endereço de Entrega</h2>
+                                    </div>
+
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="cep" className="text-sm font-medium text-zinc-300">
+                                                CEP *
+                                            </label>
+                                            <div className="relative">
+                                                <input 
+                                                    {...register("zip_code")}
+                                                    data-invalid={errors.zip_code ? "true" : "false"}
+                                                    onChange={handleViaCep}
+                                                    placeholder="00000-000"
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="cep" 
+                                                />
+                                            </div>
+                                            <a 
+                                                href="https://buscacepinter.correios.com.br/app/endereco/index.php" 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-green-500 hover:underline"
+                                            >
+                                                Não sei meu CEP
+                                            </a>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                            <div className="flex flex-col gap-2 sm:col-span-2">
+                                                <label htmlFor="street" className="text-sm font-medium text-zinc-300">
+                                                    Endereço *
+                                                </label>
+                                                <input 
+                                                    {...register("street")}
+                                                    data-invalid={errors.street ? "true" : "false"}
+                                                    placeholder="Rua, Avenida..."
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="street" 
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label htmlFor="number" className="text-sm font-medium text-zinc-300">
+                                                    Número *
+                                                </label>
+                                                <input 
+                                                    {...register("number")}
+                                                    data-invalid={errors.number ? "true" : "false"}
+                                                    placeholder="123"
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="number" 
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="district" className="text-sm font-medium text-zinc-300">
+                                                Bairro *
+                                            </label>
+                                            <input 
+                                                {...register("district")}
+                                                data-invalid={errors.district ? "true" : "false"}
+                                                placeholder="Centro"
+                                                className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                id="district" 
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                            <div className="flex flex-col gap-2 sm:col-span-2">
+                                                <label htmlFor="city" className="text-sm font-medium text-zinc-300">
+                                                    Cidade *
+                                                </label>
+                                                <input 
+                                                    {...register("city")}
+                                                    data-invalid={errors.city ? "true" : "false"}
+                                                    placeholder="São Paulo"
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors data-[invalid=true]:border-red-500"
+                                                    id="city" 
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label htmlFor="state" className="text-sm font-medium text-zinc-300">
+                                                    UF *
+                                                </label>
+                                                <input 
+                                                    {...register("state")}
+                                                    data-invalid={errors.state ? "true" : "false"}
+                                                    placeholder="SP"
+                                                    className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors uppercase data-[invalid=true]:border-red-500"
+                                                    id="state" 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="bg-white rounded-lg p-4 sm:p-6 border border-zinc-800">
+                                <CardPayment
+                                    initialization={{ 
+                                        amount: total() + (Number(tax?.price) || 0),
+                                        payer: {
+                                            email: client?.email,
+                                            identification: {
+                                                type: 'CPF',
+                                                number: client?.document || ""
+                                            }
+                                        }
+                                    }}
+                                    onSubmit={onSubmit}
+                                    onReady={() => setIsLoading(false)}
+                                    onError={(error: any) => console.error(error)}
+                                />
+                                <button 
+                                    onClick={() => setShowCheckout(false)}
+                                    className="text-zinc-500 hover:text-zinc-800 text-sm mt-4 w-full text-center transition-colors"
+                                >
+                                    Voltar e alterar dados de entrega
+                                </button>
                             </div>
+                        )}
+                    </form>
 
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="name" className="text-sm font-medium text-zinc-300">
-                                        Nome Completo *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={name} 
-                                        onChange={(e) => setName(e.target.value)} 
-                                        placeholder="João Silva"
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="name" 
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="email" className="text-sm font-medium text-zinc-300">
-                                        E-mail *
-                                    </label>
-                                    <input 
-                                        required 
-                                        type="email"
-                                        value={email} 
-                                        onChange={(e) => setEmail(e.target.value)} 
-                                        placeholder="joao@email.com"
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="email" 
-                                    />
-                                    {email.length > 0 && !validateEmail(email) && (
-                                        <span className="text-xs text-red-500">E-mail inválido</span>
-                                    )}
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="phone" className="text-sm font-medium text-zinc-300">
-                                            Telefone *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={phone} 
-                                            onChange={(e) => setPhone(formatPhone(e.target.value))} 
-                                            placeholder="(11) 99999-9999"
-                                            maxLength={15}
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                            id="phone" 
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="cpf" className="text-sm font-medium text-zinc-300">
-                                            CPF *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={cpf} 
-                                            onChange={(e) => setCpf(formatCPF(e.target.value))} 
-                                            placeholder="000.000.000-00"
-                                            maxLength={14}
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                            id="cpf" 
-                                        />
-                                        {cpf.length > 0 && !validateCPF(cpf) && (
-                                            <span className="text-xs text-red-500">CPF deve ter 11 dígitos</span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Container 2: Endereço de Entrega */}
-                        <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
-                            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                                <MapPin className="size-5 sm:size-6 text-yellow-500" />
-                                <h2 className="text-lg sm:text-xl font-bold">Endereço de Entrega</h2>
-                            </div>
-
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="cep" className="text-sm font-medium text-zinc-300">
-                                        CEP *
-                                    </label>
-                                    <div className="relative">
-                                        <input 
-                                            required 
-                                            value={CEP} 
-                                            onChange={(e) => {
-                                                const formatted = formatCEP(e.target.value)
-                                                setCEP(formatted)
-                                                getAddress(formatted)
-                                            }} 
-                                            placeholder="00000-000"
-                                            maxLength={9}
-                                            className={`w-full px-4 py-3 rounded bg-black border ${cepError ? 'border-red-500' : 'border-zinc-700'} text-white outline-none focus:border-green-500 transition-colors`}
-                                            id="cep" 
-                                        />
-                                        {isLoadingCEP && (
-                                            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-zinc-400 animate-pulse" />
-                                        )}
-                                    </div>
-                                    {cepError && (
-                                        <span className="text-xs text-red-500">CEP não encontrado</span>
-                                    )}
-                                    <a 
-                                        href="https://buscacepinter.correios.com.br/app/endereco/index.php" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-xs text-green-500 hover:underline"
-                                    >
-                                        Não sei meu CEP
-                                    </a>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div className="flex flex-col gap-2 sm:col-span-2">
-                                        <label htmlFor="street" className="text-sm font-medium text-zinc-300">
-                                            Endereço *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={street} 
-                                            onChange={(e) => setStreet(e.target.value)} 
-                                            placeholder="Rua, Avenida..."
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                            id="street" 
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="number" className="text-sm font-medium text-zinc-300">
-                                            Número *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={number} 
-                                            onChange={(e) => setNumber(e.target.value)} 
-                                            placeholder="123"
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                            id="number" 
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="district" className="text-sm font-medium text-zinc-300">
-                                        Bairro *
-                                    </label>
-                                    <input 
-                                        required 
-                                        value={district} 
-                                        onChange={(e) => setDistrict(e.target.value)} 
-                                        placeholder="Centro"
-                                        className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                        id="district" 
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div className="flex flex-col gap-2 sm:col-span-2">
-                                        <label htmlFor="city" className="text-sm font-medium text-zinc-300">
-                                            Cidade *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={city} 
-                                            onChange={(e) => setCity(e.target.value)} 
-                                            placeholder="São Paulo"
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors"
-                                            id="city" 
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="state" className="text-sm font-medium text-zinc-300">
-                                            UF *
-                                        </label>
-                                        <input 
-                                            required 
-                                            value={state} 
-                                            onChange={(e) => setState(e.target.value.toUpperCase())} 
-                                            placeholder="SP"
-                                            maxLength={2}
-                                            className="w-full px-4 py-3 rounded bg-black border border-zinc-700 text-white outline-none focus:border-green-500 transition-colors uppercase"
-                                            id="state" 
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Coluna Direita - Container 3: Resumo do Pedido */}
-                    <div className="flex flex-col gap-6 lg:gap-8 order-1 lg:order-2">
+                    <div className="flex flex-col gap-6 lg:gap-8 order-2">
                         <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 border border-zinc-800">
                             <div className="flex items-center gap-3 mb-4 sm:mb-6">
                                 <Package className="size-5 sm:size-6 text-yellow-500" />
@@ -370,10 +409,10 @@ export default function Delivery() {
                             <div className="space-y-3 text-sm mb-6">
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>Total</span>
-                                    <span className="text-yellow-500">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
+                                    <span className="text-yellow-500">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total() || 0)}</span>
                                 </div>
                                 <p className="text-xs text-zinc-400">
-                                    Frete calculado na próxima etapa
+                                    Frete: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tax?.price || 0)}
                                 </p>
                             </div>
 
@@ -389,32 +428,25 @@ export default function Delivery() {
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <button
-                                    onClick={handlePayment}
-                                    disabled={isLoading || !isFormValid || cart.length === 0}
-                                    className="w-full cursor-pointer flex items-center justify-center gap-3 bg-green-500 text-white uppercase py-4 rounded font-bold text-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
-                                >
-                                    {isLoading ? (
-                                        <>
-                                            <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            Redirecionando...
-                                        </>
-                                    ) : (
-                                        <>
-                                            Finalizar Pagamento
-                                            <MoveRight className="size-5" />
-                                        </>
-                                    )}
-                                </button>
+                            {!showCheckout && (
+                                <div className="space-y-3">
+                                    <button
+                                        form="main-form"
+                                        type="submit"
+                                        className="w-full cursor-pointer flex items-center justify-center gap-3 bg-green-500 text-white uppercase py-4 rounded font-bold text-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
+                                    >
+                                        Ir para o Pagamento
+                                        <MoveRight className="size-5" />
+                                    </button>
 
-                                <Link 
-                                    href="/pedidos"
-                                    className="block text-center text-sm text-zinc-400 hover:text-white transition-colors"
-                                >
-                                    Voltar ao carrinho
-                                </Link>
-                            </div>
+                                    <Link 
+                                        href="/pedidos"
+                                        className="block text-center text-sm text-zinc-400 hover:text-white transition-colors"
+                                    >
+                                        Voltar ao carrinho
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
