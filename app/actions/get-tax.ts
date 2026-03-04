@@ -1,11 +1,11 @@
 'use server'
 
 import axios from "axios"
-import { CartItem } from "../_context/cart"
+import { ICart } from "../_context/cart"
 
 export interface _get_tax { 
     zip_code: string
-    products: CartItem[]
+    products: ICart[]
 }
 
 export async function get_tax({zip_code, products}: _get_tax) {
