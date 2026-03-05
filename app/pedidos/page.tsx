@@ -120,6 +120,7 @@ export default function Cart() {
                       </div>
 
                       <Link 
+                        id="initiate-checkout"
                         className="block w-full uppercase font-bold text-center bg-green-500 px-4 py-3 sm:py-4 rounded text-white cursor-pointer hover:bg-green-600 transition-colors text-sm sm:text-base" 
                         href="/entrega"
                       >

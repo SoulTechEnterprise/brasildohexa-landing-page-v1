@@ -431,6 +431,7 @@ export default function Delivery() {
                             {!showCheckout && (
                                 <div className="space-y-3">
                                     <button
+                                        id="add-payment-info"
                                         form="main-form"
                                         type="submit"
                                         className="w-full cursor-pointer flex items-center justify-center gap-3 bg-green-500 text-white uppercase py-4 rounded font-bold text-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
