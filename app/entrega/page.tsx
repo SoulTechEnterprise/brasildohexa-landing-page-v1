@@ -386,7 +386,7 @@ export default function Delivery() {
                                     <div key={item.id} className="flex gap-4 pb-4 border-b border-zinc-800 last:border-0">
                                         <div 
                                             className="w-20 h-20 rounded bg-cover bg-center bg-no-repeat shrink-0"
-                                            style={{ backgroundImage: `url(/t-shirt/${item.color.toLowerCase()}.jpeg)` }}
+                                            style={{ backgroundImage: `url(/t-shirt/${item.color.toLowerCase()}.webp)` }}
                                         />
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div>

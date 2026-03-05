@@ -2,9 +2,9 @@ import Link from "next/link"
 
 export function Footer() {
     return (
-        <footer className="border-t border-white/25 bg-black text-white">
-            <div className="max-w-7xl m-auto px-4 py-8 lg:py-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+        <footer className="snap-start border-t border-white/25 bg-black text-white">
+            <div className="max-w-7xl m-auto px-4 py-6 md:py-8 lg:py-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
                     {/* Sobre */}
                     <div>
                         <h3 className="font-bold text-lg mb-4 text-yellow-500">Brasil do Hexa</h3>

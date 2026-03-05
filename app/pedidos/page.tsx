@@ -48,7 +48,7 @@ export default function Cart() {
                         <div className="grid grid-cols-[80px_1fr] sm:grid-cols-[100px_1fr] gap-3 sm:gap-4">
                           <div 
                             className="w-full aspect-square bg-black rounded bg-cover bg-center bg-no-repeat"
-                            style={{ backgroundImage: `url(/t-shirt/${el.color.toLowerCase()}.jpeg)` }}
+                            style={{ backgroundImage: `url(/t-shirt/${el.color.toLowerCase()}.webp)` }}
                           />
 
                           <div className="flex flex-col justify-between gap-2 sm:gap-0">
