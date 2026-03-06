@@ -32,6 +32,95 @@ body::-webkit-scrollbar-thumb:hover {
   background: #3f3f46; /* Cinza mais claro ao hover (zinc-700) */
 }
 
+/* === Animations === */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Animate on scroll system */
+[data-animate] {
+  opacity: 0;
+}
+
+[data-animate].in-view {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-animate="fade-up"].in-view { animation-name: fadeInUp; animation-duration: 0.8s; }
+[data-animate="fade-down"].in-view { animation-name: fadeInDown; animation-duration: 0.8s; }
+[data-animate="fade-left"].in-view { animation-name: fadeInLeft; animation-duration: 0.8s; }
+[data-animate="fade-right"].in-view { animation-name: fadeInRight; animation-duration: 0.8s; }
+[data-animate="scale"].in-view { animation-name: scaleIn; animation-duration: 0.6s; }
+
+[data-delay="1"].in-view { animation-delay: 0.1s; }
+[data-delay="2"].in-view { animation-delay: 0.2s; }
+[data-delay="3"].in-view { animation-delay: 0.3s; }
+[data-delay="4"].in-view { animation-delay: 0.4s; }
+[data-delay="5"].in-view { animation-delay: 0.5s; }
+[data-delay="6"].in-view { animation-delay: 0.6s; }
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+/* Button ripple */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 60%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.3s ease;
+}
+
+.btn-ripple:active::after {
+  transform: scale(2.5);
+  opacity: 1;
+  transition: none;
+}
+
+/* Cart image transition */
+.cart-image-fade {
+  animation: scaleIn 0.4s ease-out;
+}
+
 @theme inline {
   --radix-toast-swipe-move-x: var(--radix-toast-swipe-move-x, 0);
   --radius-sm: calc(var(--radius) - 4px);

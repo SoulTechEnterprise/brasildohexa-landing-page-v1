@@ -160,7 +160,6 @@ export default function TermsOfService() {
                                 Para dúvidas ou suporte sobre estes termos:
                             </p>
                             <div className="bg-zinc-800 p-4 rounded mt-4 space-y-2">
-                                <p><strong className="text-green-500">E-mail:</strong> contato@brasildohexa.com.br</p>
                                 <p><strong className="text-green-500">WhatsApp:</strong> (11) 99999-9999</p>
                                 <p><strong className="text-green-500">Horário:</strong> Segunda a Sexta, 9h às 18h</p>
                             </div>
@@ -168,7 +167,7 @@ export default function TermsOfService() {
 
                         <div className="border-t border-zinc-700 pt-6 mt-8">
                             <p className="text-sm text-zinc-500 text-center">
-                                Brasil do Hexa - CNPJ: XX.XXX.XXX/XXXX-XX
+                                Brasil do Hexa
                                 <br />
                                 Todos os direitos reservados © 2026
                             </p>

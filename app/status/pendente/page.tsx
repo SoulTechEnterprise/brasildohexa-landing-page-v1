@@ -3,31 +3,31 @@ import Link from "next/link"
 
 export default function Pendente() {
     return (
-        <main className="min-h-dvh flex items-center justify-center bg-black text-white p-4">
+        <main className="min-h-dvh flex items-center justify-center bg-black text-white p-4 md:p-6">
             <div className="max-w-2xl w-full">
                 {/* Ícone de Pendente */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-6 md:mb-8">
                     <div className="relative">
                         <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-2xl"></div>
-                        <div className="relative bg-yellow-500/10 p-8 rounded-full border-4 border-yellow-500">
-                            <Clock className="size-24 text-yellow-500" strokeWidth={2} />
+                        <div className="relative bg-yellow-500/10 p-5 md:p-8 rounded-full border-4 border-yellow-500">
+                            <Clock className="size-16 md:size-24 text-yellow-500" strokeWidth={2} />
                         </div>
                     </div>
                 </div>
 
                 {/* Conteúdo Principal */}
-                <div className="text-center space-y-6 mb-8">
-                    <h1 className="text-4xl lg:text-5xl font-bold">
+                <div className="text-center space-y-4 md:space-y-6 mb-6 md:mb-8">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
                         Pagamento <span className="text-yellow-500">em Análise</span>
                     </h1>
                     
-                    <p className="text-xl text-zinc-400">
+                    <p className="text-sm md:text-lg lg:text-xl text-zinc-400">
                         Seu pedido está sendo processado!
                     </p>
                 </div>
 
                 {/* Informações de Status */}
-                <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 space-y-4 mb-6">
+                <div className="bg-zinc-900 rounded-lg p-4 md:p-6 border border-zinc-800 space-y-4 mb-4 md:mb-6">
                     <div className="flex items-start gap-4">
                         <RefreshCw className="size-6 text-yellow-500 shrink-0 mt-1 animate-spin" />
                         <div className="flex-1">

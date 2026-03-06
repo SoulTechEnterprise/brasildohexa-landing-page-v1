@@ -40,11 +40,6 @@ export function Footer() {
                     <div>
                         <h3 className="font-bold text-lg mb-4">Contato</h3>
                         <ul className="space-y-2 text-sm text-zinc-400">
-                            <li className="hidden">
-                                <strong className="text-green-500">E-mail:</strong>
-                                <br />
-                                contato@brasildohexa.com.br
-                            </li>
                             <li>
                                 <strong className="text-green-500">WhatsApp:</strong>
                                 <br />
@@ -58,9 +53,8 @@ export function Footer() {
                 </div>
 
                 <div className="border-t border-white/25 pt-6">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-400">
+                    <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-zinc-400">
                         <p>© 2026 Brasil do Hexa. Todos os direitos reservados.</p>
-                        <p className="text-xs">CNPJ: XX.XXX.XXX/XXXX-XX</p>
                     </div>
                 </div>
             </div>

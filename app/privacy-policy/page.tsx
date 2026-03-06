@@ -152,7 +152,7 @@ export default function PrivacyPolicy() {
                             <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4">
                                 <p className="text-sm">
                                     <strong className="text-green-500">Para exercer seus direitos:</strong><br />
-                                    Entre em contato através do e-mail: <strong>privacidade@brasildohexa.com.br</strong><br />
+                                    Entre em contato através do WhatsApp.<br />
                                     Responderemos em até 15 dias.
                                 </p>
                             </div>
@@ -185,12 +185,11 @@ export default function PrivacyPolicy() {
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4">12. Encarregado de Dados (DPO)</h2>
                             <p className="leading-relaxed mb-3">
-                                Nosso Encarregado de Proteção de Dados está disponível para esclarecer dúvidas:
+                                Nosso Encarregado de Proteção de Dados está disponível para esclarecer dúvidas através do WhatsApp.
                             </p>
                             <div className="bg-zinc-800 p-4 rounded space-y-2">
                                 <p><strong className="text-green-500">Nome:</strong> [Nome do DPO]</p>
-                                <p><strong className="text-green-500">E-mail:</strong> dpo@brasildohexa.com.br</p>
-                                <p><strong className="text-green-500">Contato geral:</strong> privacidade@brasildohexa.com.br</p>
+                                <p><strong className="text-green-500">WhatsApp:</strong> (11) 99999-9999</p>
                             </div>
                         </section>
 
@@ -202,7 +201,6 @@ export default function PrivacyPolicy() {
                             </p>
                             <div className="bg-zinc-800 p-4 rounded mt-3 space-y-2">
                                 <p><strong className="text-green-500">Site:</strong> www.gov.br/anpd</p>
-                                <p><strong className="text-green-500">E-mail:</strong> comunicacao@anpd.gov.br</p>
                             </div>
                         </section>
 
@@ -212,7 +210,6 @@ export default function PrivacyPolicy() {
                                 Para dúvidas sobre esta política ou tratamento de dados:
                             </p>
                             <div className="bg-zinc-800 p-4 rounded space-y-2">
-                                <p><strong className="text-green-500">E-mail:</strong> contato@brasildohexa.com.br</p>
                                 <p><strong className="text-green-500">WhatsApp:</strong> (11) 99999-9999</p>
                                 <p><strong className="text-green-500">Horário:</strong> Segunda a Sexta, 9h às 18h</p>
                             </div>
@@ -220,7 +217,7 @@ export default function PrivacyPolicy() {
 
                         <div className="border-t border-zinc-700 pt-6 mt-8">
                             <p className="text-sm text-zinc-500 text-center">
-                                Brasil do Hexa - CNPJ: XX.XXX.XXX/XXXX-XX
+                                Brasil do Hexa
                                 <br />
                                 Esta política é regida pela Lei 13.709/2018 (LGPD)
                                 <br />
