@@ -64,7 +64,7 @@ export async function create_ticket({ tax, client, address, product }: _create_t
       }
     }
 
-    await axios.post(`${process.env.MELHOR_ENVIO_API_URL}/me/cart`, payload, {
+    await axios.post(`https://${process.env.NODE_ENV === "development" ? "sandbox.melhorenvio.com.br" : "melhorenvio.com.br"}/api/v2/me/cart`, payload, {
         headers: {
             authorization: `Bearer ${process.env.MELHOR_ENVIO_API_TOKEN}`
         }

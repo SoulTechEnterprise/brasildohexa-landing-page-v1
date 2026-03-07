@@ -21,7 +21,7 @@ export async function get_tax({zip_code, products}: _get_tax) {
       }
     })
 
-    const { data } = await axios.post(`${process.env.MELHOR_ENVIO_API_URL}/me/shipment/calculate`, {
+    const { data } = await axios.post(`https://${process.env.NODE_ENV === "development" ? "sandbox.melhorenvio.com.br" : "melhorenvio.com.br"}/api/v2/me/shipment/calculate`, {
       "from": {
         "postal_code": "96020360"
       },

@@ -22,10 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${montserrat.variable} antialiased`}
-        suppressHydrationWarning={true}
       >
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER_CLIENT_ID || ""} gtmScriptUrl={process.env.GOOGLE_TAG_MANAGER_SERVER_URL || ""} />
 

@@ -9,7 +9,7 @@ import { MoveRight, Package, MapPin, CheckCircle2, ArrowLeft, User } from "lucid
 import { Footer } from "../_components/includes/footer";
 import { CardPayment, initMercadoPago } from '@mercadopago/sdk-react';
 
-initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY as string);
+initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY as string);
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";

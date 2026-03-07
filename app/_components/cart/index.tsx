@@ -7,7 +7,7 @@ import { Color, Size } from './enum';
 
 import { toast } from "sonner"
 
-initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
+initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY!);
 
 export default function Cart() {
   const { addToCart } = useCartZustand()
@@ -16,11 +16,9 @@ export default function Cart() {
   const [size, setSize] = useState<Size>(Size.M)
 
   const handleCart = () => {
-    console.log(color)
-    console.log(size)
 
     const item = {
-      id: `${color}-${size}-camiseta-do-brasil`,
+      id: `${color.toLocaleLowerCase()}-${size.toLocaleLowerCase()}-camiseta-do-brasil`,
       title: "Camiseta",
       color,
       size,
@@ -40,7 +38,7 @@ export default function Cart() {
             <div 
               key={color}
               className="aspect-square bg-zinc-800 rounded-lg bg-cover bg-center bg-no-repeat cart-image-fade"
-              style={{ backgroundImage: `url(/t-shirt/${color}.webp)` }}
+              style={{ backgroundImage: `url(/t-shirt/${color.toLocaleLowerCase()}.webp)` }}
             />
 
             <div className="flex flex-col gap-3 md:gap-5 lg:gap-8 justify-between">
