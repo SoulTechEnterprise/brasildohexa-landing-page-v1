@@ -121,6 +121,15 @@ body::-webkit-scrollbar-thumb:hover {
   animation: scaleIn 0.4s ease-out;
 }
 
+/* Hide horizontal scrollbar on testimonials mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @theme inline {
   --radix-toast-swipe-move-x: var(--radix-toast-swipe-move-x, 0);
   --radius-sm: calc(var(--radius) - 4px);

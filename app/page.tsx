@@ -155,25 +155,26 @@ export default function Home() {
         </div>
       </div>
 
+
       <div id="testimonials" className="relative h-dvh w-full snap-start bg-linear-to-b from-black via-yellow-500/5 to-black overflow-hidden">
-        <section className="max-w-7xl m-auto px-4 md:px-6 lg:px-8 h-full flex flex-col items-center justify-center gap-6 md:gap-10 lg:gap-12">
-          <div className="flex flex-col gap-2 md:gap-4 text-center">
-            <span data-animate="fade-down" className="uppercase font-bold text-yellow-500 text-xs md:text-sm lg:text-base tracking-widest">Depoimentos</span>
-            <h2 data-animate="fade-up" data-delay="1" className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold">O que nossos <span className="text-yellow-500">torcedores</span> dizem</h2>
+        <section className="max-w-7xl m-auto px-4 md:px-6 lg:px-8 h-full flex flex-col items-center justify-center gap-2 sm:gap-3 md:gap-10 lg:gap-12 py-6 md:py-0 overflow-y-auto scrollbar-hide">
+          <div className="flex flex-col gap-1 md:gap-4 text-center shrink-0">
+            <span data-animate="fade-down" className="uppercase font-bold text-yellow-500 text-[10px] sm:text-xs md:text-sm lg:text-base tracking-widest">Depoimentos</span>
+            <h2 data-animate="fade-up" data-delay="1" className="text-xl sm:text-2xl md:text-5xl lg:text-7xl font-bold">O que nossos <span className="text-yellow-500">torcedores</span> dizem</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 lg:gap-6 max-w-sm md:max-w-none mx-auto w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 sm:gap-2 md:gap-4 lg:gap-6 w-full shrink-0">
             {testimonials.map((t, i) => (
-              <div key={i} data-animate="fade-up" data-delay={String(i + 2)} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 md:p-6 lg:p-8 flex flex-col gap-3 md:gap-4 card-hover">
-                <div className="flex gap-1">
+              <div key={i} data-animate="fade-up" data-delay={String(i + 2)} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 sm:p-3 md:p-6 lg:p-8 flex flex-col gap-1 md:gap-4 card-hover">
+                <div className="flex gap-0.5">
                   {Array.from({ length: 5 }).map((_, j) => (
-                    <span key={j} className="text-yellow-500 text-sm md:text-lg">&#9733;</span>
+                    <span key={j} className="text-yellow-500 text-xs sm:text-sm md:text-lg">&#9733;</span>
                   ))}
                 </div>
-                <p className="text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
-                <div className="mt-auto pt-3 md:pt-4 border-t border-white/10">
-                  <p className="font-bold text-white text-sm md:text-base">{t.name}</p>
-                  <p className="text-[10px] md:text-xs text-zinc-500">{t.location}</p>
+                <p className="text-zinc-300 text-[11px] sm:text-xs md:text-base leading-snug sm:leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+                <div className="mt-auto pt-1.5 sm:pt-2 md:pt-4 border-t border-white/10">
+                  <p className="font-bold text-white text-xs sm:text-sm md:text-base">{t.name}</p>
+                  <p className="text-[9px] sm:text-[10px] md:text-xs text-zinc-500">{t.location}</p>
                 </div>
               </div>
             ))}
