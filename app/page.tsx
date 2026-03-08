@@ -27,7 +27,7 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <main className="w-full h-dvh overflow-y-scroll snap-y snap-mandatory scroll-smooth text-white bg-black">
+    <main className="w-full h-dvh overflow-y-auto snap-y snap-mandatory text-white bg-black">
       <PageEffects />
 
       <div id="hero" className="relative h-dvh w-full snap-start overflow-hidden">
@@ -155,9 +155,8 @@ export default function Home() {
         </div>
       </div>
 
-
       <div id="testimonials" className="relative h-dvh w-full snap-start bg-linear-to-b from-black via-yellow-500/5 to-black overflow-hidden">
-        <section className="max-w-7xl m-auto px-4 md:px-6 lg:px-8 h-full flex flex-col items-center justify-center gap-2 sm:gap-3 md:gap-10 lg:gap-12 py-6 md:py-0 overflow-y-auto scrollbar-hide">
+        <section className="max-w-7xl m-auto px-4 md:px-6 lg:px-8 h-full flex flex-col items-center justify-center gap-2 sm:gap-3 md:gap-10 lg:gap-12 py-6 md:py-0">
           <div className="flex flex-col gap-1 md:gap-4 text-center shrink-0">
             <span data-animate="fade-down" className="uppercase font-bold text-yellow-500 text-[10px] sm:text-xs md:text-sm lg:text-base tracking-widest">Depoimentos</span>
             <h2 data-animate="fade-up" data-delay="1" className="text-xl sm:text-2xl md:text-5xl lg:text-7xl font-bold">O que nossos <span className="text-yellow-500">torcedores</span> dizem</h2>
@@ -165,7 +164,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 sm:gap-2 md:gap-4 lg:gap-6 w-full shrink-0">
             {testimonials.map((t, i) => (
-              <div key={i} data-animate="fade-up" data-delay={String(i + 2)} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 sm:p-3 md:p-6 lg:p-8 flex flex-col gap-1 md:gap-4 card-hover">
+              <div key={i} data-animate="fade-up" data-delay={String(i + 2)} className="bg-white/5 md:backdrop-blur-sm border border-white/10 rounded-xl p-2.5 sm:p-3 md:p-6 lg:p-8 flex flex-col gap-1 md:gap-4 card-hover">
                 <div className="flex gap-0.5">
                   {Array.from({ length: 5 }).map((_, j) => (
                     <span key={j} className="text-yellow-500 text-xs sm:text-sm md:text-lg">&#9733;</span>
