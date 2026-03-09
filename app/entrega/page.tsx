@@ -19,6 +19,7 @@ import { useTaxZustand } from "../_context/tax";
 import { useClientZustand } from "../_context/client";
 import { useAddressZustand } from "../_context/address";
 import { create_ticket } from "../actions/create-ticket";
+import { create_client_google_sheets } from "../actions/create-client-google-sheets";
 
 const zodSchema = z.object({
     name: z.string().min(1),
@@ -130,6 +131,7 @@ export default function Delivery() {
                     if(!tax || !client || !address || !cart) return
 
                     await create_ticket({ tax, client, address, product: cart })
+                    await create_client_google_sheets(client.name, client.email, client.phone, address.zip_code, address.street, address.number, address.district, address.city, address.state)
                     clearCart()
                     window.location.href = "/status/sucesso"
                 break
