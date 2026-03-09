@@ -5,7 +5,11 @@ import Link from "next/link"
 import { useCartZustand } from "@/app/_context/cart"
 import { useMemo } from "react"
 
+import { usePathname } from 'next/navigation'
+
 export function FloatingCart() {
+    const pathname = usePathname()
+
     const { cart } = useCartZustand()
     
     const totalItems = useMemo(() => {
@@ -14,13 +18,17 @@ export function FloatingCart() {
 
     if (totalItems === 0) return null
 
+    if(pathname !== "/") return null
+
     return (
         <Link 
             href="/pedidos"
-            className="fixed bottom-6 right-6 z-50 group"
+            className="fixed top-4 right-4 z-50 group"
             aria-label="Ver carrinho"
         >
             <div className="relative">
+                <div className="-z-10 absolute inset-0 rounded-full bg-green-500 animate-pulse blur-2xl shadow-[0_0_25px_rgba(34,197,94,1)]"></div>
+
                 {/* Botão do carrinho */}
                 <div className="flex items-center justify-center size-16 sm:size-20 bg-green-500 rounded-full shadow-2xl hover:bg-green-600 transition-all duration-300">
                     <ShoppingCart className="size-8 sm:size-10 text-white stroke-[2.5]" strokeWidth={2.5} />
